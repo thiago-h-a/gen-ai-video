@@ -1,0 +1,11 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fair-scheduler-config
+  namespace: ai-microgen
+data:
+  REDIS_URL: redis://redis.ai-microgen.svc:6379/0
+  QUANTUM: "2"
+  LOCK_TTL_MS: "500"
+  MAX_SCAN: "128"

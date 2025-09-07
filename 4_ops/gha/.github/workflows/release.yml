@@ -1,0 +1,28 @@
+
+name: release
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Release tag (e.g., v0.1.0)'
+        required: true
+
+jobs:
+  tag-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag release
+        run: |
+          make -C ops tag RELEASE=${{ github.event.inputs.release }}
+      - name: Build images
+        run: |
+          make -C ops build
+      - name: Push images
+        env:
+          REG: ${{ secrets.REGISTRY }}
+        run: |
+          if [ -z "${REG}" ]; then echo "REGISTRY secret not set"; exit 1; fi
+          make -C ops push REG=${REG}

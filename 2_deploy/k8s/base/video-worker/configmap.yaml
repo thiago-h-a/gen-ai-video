@@ -1,0 +1,9 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: video-worker-config
+  namespace: ai-microgen
+data:
+  DEFAULT_CODEC: h264
+  MAX_CONCURRENCY: "1"

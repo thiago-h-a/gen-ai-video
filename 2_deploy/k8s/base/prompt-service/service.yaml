@@ -1,0 +1,13 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prompt-service
+  namespace: ai-microgen
+spec:
+  selector:
+    app: prompt-service
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082

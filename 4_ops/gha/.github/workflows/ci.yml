@@ -1,0 +1,28 @@
+
+name: ci
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install tools (placeholder)
+        run: |
+          echo "Install lint/format tools here"
+      - name: Lint
+        run: |
+          make -C ops lint || true
+      - name: Build images (dry-run)
+        run: |
+          make -C ops build
+      - name: Smoke tests (no microservices running in CI by default)
+        run: |
+          echo "Run docker-compose and smoke tests in a matrix if desired"

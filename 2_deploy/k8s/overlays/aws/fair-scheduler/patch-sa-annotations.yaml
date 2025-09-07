@@ -1,0 +1,8 @@
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fair-scheduler-sa
+  namespace: ai-microgen
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::<ACCOUNT_ID>:role/<IRSA-ROLE-NAME>"

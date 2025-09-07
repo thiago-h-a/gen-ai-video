@@ -1,0 +1,21 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-adapter-rules
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: prometheus-adapter
+data:
+  rules.yaml: |
+    rules:
+      # Map fair_queue_depth_total{type} from fair-scheduler /metrics into External metrics
+      - seriesQuery: 'fair_queue_depth_total{type!=""}'
+        resources:
+          overrides:
+            namespace:
+              resource: namespace
+        name:
+          matches: "^fair_queue_depth_total$"
+          as: "fair_queue_depth_total"
+        metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (type)

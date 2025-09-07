@@ -1,0 +1,12 @@
+
+[project]
+name = "prompt-service"
+version = "0.2.0"
+description = "Prompt Service for ai-microgen"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "httpx",
+  "pydantic>=2.0",
+]

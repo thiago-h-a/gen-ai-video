@@ -1,0 +1,74 @@
+
+version: "3.9"
+
+services:
+  # --- Infra (dev only) ---
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+    healthcheck: {test: ["CMD", "redis-cli", "ping"], interval: 3s, timeout: 2s, retries: 30}
+
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports: ["9000:9000", "9001:9001"]
+    volumes: ["minio:/data"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # --- Core microservices ---
+  webapi:
+    build: ../../1_microservices/1_webapi
+    environment:
+      PROMPT_SERVICE_URL: http://prompt-service:8082
+      NOTIFY_SERVICE_URL: http://notify-service:8083
+      S3_ENDPOINT: http://minio:9000
+      ARTIFACTS_BUCKET: artifacts
+    ports: ["8080:8080"]
+    depends_on: [prompt-service, notify-service]
+
+  prompt-service:
+    build: ../../1_microservices/2_prompt
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    ports: ["8082:8082"]
+    depends_on: [redis]
+
+  notify-service:
+    build: ../../1_microservices/3_notification
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    ports: ["8083:8083"]
+    depends_on: [redis]
+
+  orchestrator:
+    build: ../../1_microservices/4_orchestrator
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      QUEUE_KEY: queue:generate
+      NOTIFY_URL: http://notify-service:8083
+      GPU_WORKERS: http://gpu-worker:8090
+    ports: ["8084:8084"]
+    depends_on: [redis, gpu-worker]
+
+  gpu-worker:
+    build: ../../1_microservices/5_img-worker
+    environment:
+      ARTIFACTS_ROOT: /data/artifacts
+      S3_UPLOAD: "0"
+    volumes: ["artifacts:/data"]
+    ports: ["8090:8090"]
+
+  model-registry:
+    build: ../../1_microservices/7_model-registry
+    ports: ["8086:8086"]
+
+volumes:
+  minio: {}
+  artifacts: {}

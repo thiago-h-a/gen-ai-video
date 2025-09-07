@@ -1,0 +1,13 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fair-scheduler
+  namespace: ai-microgen
+spec:
+  selector:
+    app: fair-scheduler
+  ports:
+    - name: http
+      port: 8087
+      targetPort: 8087

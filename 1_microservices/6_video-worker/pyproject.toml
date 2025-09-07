@@ -1,0 +1,14 @@
+
+[project]
+name = "video-worker"
+version = "0.1.0"
+description = "Video worker (synthetic generator) for ai-microgen"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic>=2.0",
+  "pillow",
+  "numpy",
+  "boto3",
+]

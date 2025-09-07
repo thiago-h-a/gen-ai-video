@@ -1,0 +1,15 @@
+    flowchart LR
+      subgraph Web[Web/API]
+        A[React SPA]
+      end
+      A -->|prompts| W[Web/API]
+      W -->|/api/prompts/*| P[Prompt Service]
+      P -->|enqueue-creator_id,cost| S[Fair Scheduler -DRR/Redis]
+      O[Orchestrator]
+      S <-->|/next /complete| O
+      O -->|image| GI[GPU Image Worker]
+      O -->|video| VV[Video Worker]
+      GI -->|PNG/GIF| S3[(S3 artifacts)]
+      VV -->|MP4/WebM| S3
+      W -->|/api/artifacts| S3
+      W -->|/api/catalog/models| MC[Model Catalog-SMR + DDB]

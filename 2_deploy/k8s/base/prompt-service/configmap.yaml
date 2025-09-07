@@ -1,0 +1,9 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prompt-service-config
+  namespace: ai-microgen
+data:
+  FAIR_SCHEDULER_URL: http://fair-scheduler.ai-microgen.svc:8087
+  MAX_PROMPT_LEN: "2000"

@@ -1,0 +1,13 @@
+
+[project]
+name = "fair-scheduler"
+version = "0.1.0"
+description = "DRR fairness scheduler for ai-microgen"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic>=2.0",
+  "redis>=5.0",
+  "orjson",
+]

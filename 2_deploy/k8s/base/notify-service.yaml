@@ -1,0 +1,26 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notify-service
+  namespace: ai-microgen
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: notify-service}}
+  template:
+    metadata: {labels: {app: notify-service}}
+    spec:
+      containers:
+        - name: notify-service
+          image: notify-service:latest
+          ports: [{containerPort: 8083}]
+          envFrom: [{configMapRef: {name: ai-config}}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notify-service
+  namespace: ai-microgen
+spec:
+  selector: {app: notify-service}
+  ports: [{port: 8083, targetPort: 8083}]

@@ -1,0 +1,33 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-worker
+  namespace: ai-microgen
+  labels:
+    app: video-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: video-worker }
+  template:
+    metadata:
+      labels: { app: video-worker }
+    spec:
+      serviceAccountName: video-worker-sa
+      containers:
+        - name: video-worker
+          image: video-worker:latest
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8091 }]
+          envFrom:
+            - configMapRef: { name: video-worker-config }
+          resources:
+            requests: { cpu: "250m", memory: "512Mi" }
+            limits:   { cpu: "2000m", memory: "2Gi" }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8091 }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8091 }
+            periodSeconds: 10

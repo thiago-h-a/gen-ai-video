@@ -1,0 +1,12 @@
+
+{
+  "title": "Adaptive Split — Image vs Video",
+  "panels": [
+    {"type": "timeseries", "title": "Arrival rate (lambda)",
+     "targets": [{"expr": "arrival_rate_per_sec{type="image"}"}, {"expr": "arrival_rate_per_sec{type="video"}"}]},
+    {"type": "timeseries", "title": "Service time EMA (ms)",
+     "targets": [{"expr": "service_time_ms_ema{type="image"}"}, {"expr": "service_time_ms_ema{type="video"}"}]},
+    {"type": "timeseries", "title": "Queue depth total",
+     "targets": [{"expr": "fair_queue_depth_total{type="image"}"}, {"expr": "fair_queue_depth_total{type="video"}"}]}
+  ]
+}

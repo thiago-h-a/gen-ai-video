@@ -1,0 +1,87 @@
+ai-microgen/
+├─ README.md
+├─ docs/
+│  ├─ README.md
+│  ├─ index.md
+│  ├─ architecture.md
+│  ├─ apis-overview.md
+│  ├─ security.md
+│  ├─ glossary.md
+│  ├─ runbooks/
+│  │  ├─ operational-checklist.md
+│  │  └─ infra-consolidation.md
+│  ├─ discussions/
+│  │  └─ 0004-adaptive-split-control.md
+│  └─ diagrams/
+│     ├─ architecture.ascii
+│     ├─ architecture.mmd
+│     ├─ flow-image.mmd
+│     ├─ flow-video.mmd
+│     └─ flow-fairness.mmd
+├─ services/
+│  ├─ webapi/
+│  │  ├─ README.md  ├─ Dockerfile  ├─ pyproject.toml
+│  │  └─ src/
+│  │     ├─ main.py  ├─ settings.py  ├─ util/logging.py
+│  │     └─ routers/ ├─ health.py  └─ api.py
+│  ├─ prompt-service/
+│  │  ├─ README.md  ├─ Dockerfile  ├─ pyproject.toml
+│  │  └─ src/
+│  │     ├─ main.py  ├─ settings.py  ├─ models.py
+│  │     ├─ util/ └─ helpers.py
+│  │     └─ routers/ └─ routes.py
+│  ├─ fair-scheduler/
+│  │  ├─ README.md  ├─ Dockerfile  ├─ pyproject.toml
+│  │  └─ src/
+│  │     ├─ main.py  ├─ version.py  ├─ settings.py
+│  │     ├─ util/logging.py  ├─ models.py
+│  │     ├─ store.py  ├─ drr.py  ├─ metrics.py
+│  │     └─ routers/ ├─ health.py  └─ schedule.py
+│  ├─ gpu-worker/
+│  │  ├─ README.md  ├─ Dockerfile  ├─ pyproject.toml
+│  │  └─ src/
+│  │     ├─ main.py  ├─ version.py  ├─ settings.py  ├─ models.py
+│  │     ├─ engine.py  ├─ storage.py  ├─ util/logging.py
+│  │     ├─ routers/ ├─ health.py  ├─ generate.py  └─ models.py
+│  │     └─ static/ └─ demo.html
+│  ├─ video-worker/
+│  │  ├─ README.md  ├─ Dockerfile  ├─ pyproject.toml
+│  │  └─ src/
+│  │     ├─ main.py  ├─ settings.py  ├─ util/logging.py
+│  │     ├─ engine.py
+│  │     └─ routers/ ├─ health.py  └─ generate_video.py
+│  └─ model-catalog/
+│     ├─ README.md  ├─ Dockerfile  ├─ pyproject.toml
+│     └─ src/
+│        ├─ main.py  ├─ settings.py  ├─ util/logging.py
+│        └─ routers/ └─ models.py
+├─ deploy/
+│  └─ k8s/
+│     ├─ base/
+│     │  ├─ webapi/ (kustomization, sa, cm, svc, deploy)
+│     │  ├─ prompt-service/ (kustomization, sa, cm, svc, deploy)
+│     │  ├─ fair-scheduler/ (kustomization, sa, cm, svc, deploy)
+│     │  ├─ gpu-worker/ (kustomization, sa?, cm?, svc, deploy, hpa)
+│     │  ├─ video-worker/ (kustomization, sa?, cm?, svc, deploy, hpa)
+│     │  ├─ model-catalog/ (kustomization, sa, cm, svc, deploy)
+│     │  └─ monitoring/prometheus-adapter/ (cm, kustomization)
+│     └─ overlays/
+│        ├─ aws/ (per-service kustomization + patch-sa-annotations.yaml, plus fair-scheduler patch-configmap.yaml)
+│        └─ local/ (per-service kustomization)
+├─ infra/
+│  └─ terraform/
+│     ├─ modules/
+│     │  ├─ irsa-role/ (main.tf, variables.tf, outputs.tf)
+│     │  ├─ redis/ (main.tf, variables.tf, outputs.tf)
+│     │  └─ s3-artifacts/ (main.tf, variables.tf, outputs.tf)
+│     ├─ variables.tf  ├─ policies.tf
+│     ├─ infra_consolidation.tf
+│     └─ outputs.tf
+├─ ops/
+│  ├─ Makefile
+│  ├─ scripts/ ├─ sync_irsa_patches.py  └─ set_redis_url.py
+│  └─ monitoring/
+│     ├─ grafana/dashboards/adaptive-split.json
+│     └─ alerts/adaptive.yml
+└─ config/
+   └─ README.md

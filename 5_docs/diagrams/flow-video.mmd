@@ -1,0 +1,23 @@
+sequenceDiagram
+  autonumber
+  participant SPA as React SPA
+  participant WEB as Web/API
+  participant PS as Prompt Service
+  participant FS as Fair Scheduler
+  participant ORC as Orchestrator
+  participant VW as video-worker
+  participant S3 as S3
+
+  SPA->>WEB: POST /api/prompts/video {prompt, model_id, fps, seconds}
+  WEB->>PS: POST /prompts/video {creator_id, ...}
+  PS->>FS: POST /enqueue {job_id, type=video, cost, payload}
+  loop polling
+    ORC->>FS: GET /next?type=video
+    FS-->>ORC: {job_id,...} or 204
+  end
+  ORC->>VW: POST /generate/video {job_id, params}
+  VW-->>S3: put artifact (mp4/webm)
+  ORC->>FS: POST /complete {job_id, success, duration_ms}
+  WEB->>MC: GET /api/catalog/models
+  SPA->>WEB: GET /api/artifacts/{key}
+  WEB-->>SPA: 302 to S3 presigned URL

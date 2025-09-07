@@ -1,0 +1,35 @@
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ai-microgen
+resources:
+  - ../../base/namespace.yaml
+  - ../../base/configmap.yaml
+  - ../../base/webapi.yaml
+  - ../../base/prompt-service.yaml
+  - ../../base/notify-service.yaml
+  - ../../base/orchestrator.yaml
+  - ../../base/gpu-worker.yaml
+  - ../../base/model-registry.yaml
+  - ../../base/ingress.yaml
+patches:
+  - path: patches-env.yaml
+images:
+  - name: webapi
+    newName: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/webapi
+    newTag: latest
+  - name: prompt-service
+    newName: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/prompt-service
+    newTag: latest
+  - name: notify-service
+    newName: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/notify-service
+    newTag: latest
+  - name: orchestrator
+    newName: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/orchestrator
+    newTag: latest
+  - name: gpu-worker
+    newName: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/gpu-worker
+    newTag: latest
+  - name: model-registry
+    newName: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/model-registry
+    newTag: latest

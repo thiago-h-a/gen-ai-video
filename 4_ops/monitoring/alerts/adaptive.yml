@@ -1,0 +1,18 @@
+
+groups:
+- name: ai-microgen-adaptive
+  rules:
+  - alert: VideoQueueBacklogHigh
+    expr: fair_queue_depth_total{type="video"} > 30
+    for: 2m
+    labels: { severity: warning }
+    annotations:
+      summary: "Video backlog high"
+      description: "Video queue depth is above 30 for 2m"
+  - alert: ImageQueueBacklogHigh
+    expr: fair_queue_depth_total{type="image"} > 100
+    for: 2m
+    labels: { severity: warning }
+    annotations:
+      summary: "Image backlog high"
+      description: "Image queue depth is above 100 for 2m"

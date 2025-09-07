@@ -1,0 +1,13 @@
+
+[project]
+name = "orchestrator"
+version = "0.1.0"
+description = "Job orchestrator for ai-microgen"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic",
+  "httpx",
+  "redis",
+]

@@ -1,0 +1,22 @@
+sequenceDiagram
+  autonumber
+  participant SPA as React SPA
+  participant WEB as Web/API
+  participant PS as Prompt Service
+  participant FS as Fair Scheduler
+  participant ORC as Orchestrator
+  participant GPU as gpu-worker
+  participant S3 as S3
+
+  SPA->>WEB: POST /api/prompts/image {prompt, model_id}
+  WEB->>PS: POST /prompts/image {creator_id, ...}
+  PS->>FS: POST /enqueue {job_id, creator_id, type=image, cost, payload}
+  loop polling
+    ORC->>FS: GET /next?type=image
+    FS-->>ORC: {job_id,...} or 204
+  end
+  ORC->>GPU: POST /generate {job_id, prompt, params}
+  GPU-->>S3: put artifact (png/gif)
+  ORC->>FS: POST /complete {job_id, success, duration_ms}
+  SPA->>WEB: GET /api/artifacts/{key}
+  WEB-->>SPA: 302 to S3 presigned URL

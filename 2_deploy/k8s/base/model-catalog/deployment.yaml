@@ -1,0 +1,36 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-catalog
+  namespace: ai-microgen
+  labels:
+    app: model-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: model-catalog }
+  template:
+    metadata:
+      labels: { app: model-catalog }
+    spec:
+      serviceAccountName: model-catalog-sa
+      containers:
+        - name: model-catalog
+          image: model-catalog:latest
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8086 }]
+          envFrom:
+            - configMapRef: { name: model-catalog-config }
+          env:
+            - name: AWS_REGION
+              valueFrom: { fieldRef: { fieldPath: metadata.namespace } } # replace with real region via secret or cm in overlay
+          resources:
+            requests: { cpu: "50m", memory: "128Mi" }
+            limits:   { cpu: "500m", memory: "512Mi" }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8086 }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8086 }
+            periodSeconds: 10

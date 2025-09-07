@@ -1,0 +1,16 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-worker
+  namespace: ai-microgen
+spec:
+  template:
+    spec:
+      nodeSelector:
+        eks.amazonaws.com/accelerator: nvidia
+        workload: video
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule

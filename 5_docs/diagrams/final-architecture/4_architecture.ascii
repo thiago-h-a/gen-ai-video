@@ -1,0 +1,48 @@
+Users/SPA
+   | HTTPS
+   v
++--------------------------+        +-----------------------------------+
+| Web / API (FastAPI)     |-------> | Model Catalog (SMR + DDB)        |
+|  /api/prompts/*         | /models |  /models                         |
+|  /api/artifacts/{key}   |        +-----------------------------------+
++-----------+--------------+
+            | POST (image|video)
+            v
++--------------------------+
+| Prompt Service           |
+| validate + cost          |
++-----------+--------------+
+            | enqueue(creator_id,cost,payload)
+            v
++-----------------------------------------------------------------------+
+| Fair Scheduler [DRR] on Redis (ring/ptr, deficits, creator queues)    |
+| /enqueue /next /complete /metrics                                      |
++---------------+------------------------------------------+------------+
+                ^                                          ^
+                |                                          |
+        +-------+--------+                          +------+-------+
+        | Orchestrator   | [HA]                     | Orchestrator | [HA]
+        +-------+--------+                          +------+-------+
+                | image jobs                               | video jobs
+                v                                          v
+      +---------------------------+             +---------------------------+
+      | gpu-worker (images)       |  [HPA]      | video-worker (videos)     | [HPA]
+      | outputs: PNG/GIF          |             | outputs: MP4/WebM         |
+      +-------------+-------------+             +-------------+-------------+
+                    | put_object                               | put_object
+                    +-------------------------+----------------+
+                                              v
+                                       +--------------+
+                                       | S3 Artifacts |
+                                       +--------------+
+
+
+=============================================================================
+Legend: Redis used as message queue by scheduler; creator‑fair scheduling via DRR
+
+[HA]  High availability (multiple replicas)
+[HPA] Scaled by Horizontal Pod Autoscaler (uses external metric from Prometheus)
+[DRR] Deficit Round Robin fairness algorithm
+SMR   SageMaker Model Registry
+DDB   DynamoDB
+ring/ptr  DRR data structures: ring list + pointer; also per-creator deficits & queues

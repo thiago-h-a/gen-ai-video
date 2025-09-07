@@ -1,0 +1,22 @@
+{
+  "id": "base-v1",
+  "name": "Base Image Model v1",
+  "task": "image",
+  "version": "1.0.0",
+  "weights": {
+    "type": "s3",
+    "bucket": "models",
+    "key": "base-v1/weights.safetensors"
+  },
+  "tags": [
+    "stable",
+    "default"
+  ],
+  "params": {
+    "resolution": [
+      768,
+      512
+    ],
+    "dtype": "fp16"
+  }
+}

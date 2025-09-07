@@ -1,0 +1,32 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prompt-service
+  namespace: ai-microgen
+  labels: { app: prompt-service }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: prompt-service }
+  template:
+    metadata:
+      labels: { app: prompt-service }
+    spec:
+      serviceAccountName: prompt-service-sa
+      containers:
+        - name: prompt-service
+          image: prompt-service:latest
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8082 }]
+          envFrom:
+            - configMapRef: { name: prompt-service-config }
+          resources:
+            requests: { cpu: "50m", memory: "128Mi" }
+            limits:   { cpu: "500m", memory: "512Mi" }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8082 }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8082 }
+            periodSeconds: 10

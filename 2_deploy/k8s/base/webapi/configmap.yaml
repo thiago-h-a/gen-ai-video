@@ -1,0 +1,13 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapi-config
+  namespace: ai-microgen
+data:
+  PROMPT_SERVICE_URL: http://prompt-service.ai-microgen.svc:8082
+  MODEL_CATALOG_URL: http://model-catalog.ai-microgen.svc:8086
+  SIGN_ARTIFACTS: "0"
+  ARTIFACTS_BUCKET: artifacts
+  S3_ENDPOINT: http://minio.ai-microgen.svc:9000
+  S3_REGION: us-east-1

@@ -1,0 +1,22 @@
+{
+  "id": "photoreal-v1",
+  "name": "Photoreal Diffusion v1",
+  "task": "image",
+  "version": "1.1.0",
+  "weights": {
+    "type": "s3",
+    "bucket": "models",
+    "key": "photoreal-v1/weights.safetensors"
+  },
+  "tags": [
+    "photoreal",
+    "hires"
+  ],
+  "params": {
+    "resolution": [
+      1024,
+      1024
+    ],
+    "dtype": "fp16"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "video-gen-v1",
+  "name": "Video Generator v1",
+  "task": "video",
+  "version": "0.9.0",
+  "weights": {
+    "type": "s3",
+    "bucket": "models",
+    "key": "video-gen-v1/weights.ckpt"
+  },
+  "tags": [
+    "experimental",
+    "video"
+  ],
+  "params": {
+    "fps": 12,
+    "max_seconds": 4
+  }
+}

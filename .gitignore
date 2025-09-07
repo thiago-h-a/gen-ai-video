@@ -1,0 +1,32 @@
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+.mypy_cache/
+.pytest_cache/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+
+# Build outputs
+/dist/
+/build/
+/**/src/static/
+/**/.cache/
+
+# Vite/Next/React caches
+/.turbo/
+/.next/
+/.esbuild/
+
+# Docker
+**/.dockerignore

@@ -1,0 +1,19 @@
+
+groups:
+  - name: ai-microgen.rules
+    rules:
+      - alert: QueueBacklogHigh
+        expr: ai_queue_depth > 100
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "Queue backlog high"
+          description: "ai_queue_depth has been >100 for 5m"
+
+      - alert: JobFailuresSpike
+        expr: increase(ai_jobs_failed_total[10m]) > 10
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "Job failures spiking"
+          description: "More than 10 job failures in 10 minutes"

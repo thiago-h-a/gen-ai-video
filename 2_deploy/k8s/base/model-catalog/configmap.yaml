@@ -1,0 +1,12 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-catalog-config
+  namespace: ai-microgen
+data:
+  CATALOG_DDB_MODELS: model_catalog_models
+  CATALOG_DDB_VERSIONS: model_catalog_versions
+  CATALOG_DDB_CARDS: model_catalog_cards
+  SMR_ENABLED: "0"
+  CATALOG_MUTABLE: "0"

@@ -1,0 +1,119 @@
+ai-microgen/
+├─ README.md                          [~20]  Top-level overview and quick links.
+├─ docs/
+│  ├─ README.md                       [~40]  Docs entrypoint; navigation to key sections.
+│  ├─ index.md                        [~30]  Project overview and core request path.
+│  ├─ architecture.md                 [~60]  System context, components, AWS mapping.
+│  ├─ apis-overview.md                [~30]  Cross-service API table with links.
+│  ├─ security.md                     [~30]  IRSA, data-at-rest, auth notes.
+│  ├─ glossary.md                     [~20]  Common terms (DRR, SMR, DDB, etc.).
+│  ├─ runbooks/
+│  │  ├─ operational-checklist.md     [~70]  First-deploy checks, health, incident steps.
+│  │  └─ infra-consolidation.md       [~120] Terraform + overlays patch workflow.
+│  ├─ discussions/
+│  │  └─ 0004-adaptive-split-control.md [~60]  HPA split and backlog-driven scaling ADR.
+│  └─ diagrams/
+│     ├─ architecture.ascii           [~40]  Final architecture ASCII.
+│     ├─ architecture.mmd             [~25]  Mermaid architecture diagram.
+│     ├─ flow-image.mmd               [~25]  Image flow sequence diagram.
+│     ├─ flow-video.mmd               [~25]  Video flow sequence diagram.
+│     └─ flow-fairness.mmd            [~25]  DRR/fairness flow diagram.
+├─ services/
+│  ├─ webapi/
+│  │  ├─ README.md                    [~40]  Edge role, endpoints, env config.
+│  │  ├─ Dockerfile                   [~10]  FastAPI runtime image.
+│  │  ├─ pyproject.toml               [~15]  Dependencies (httpx, boto3, FastAPI).
+│  │  └─ src/
+│  │     ├─ main.py                   [~15]  App factory and router wiring.
+│  │     ├─ settings.py               [~20]  PROMPT/MODEL URLs, S3 signing env.
+│  │     ├─ util/logging.py           [~20]  Simple console logger.
+│  │     └─ routers/
+│  │        ├─ health.py              [~10]  `/healthz` liveness.
+│  │        └─ api.py                 [~110] Prompts proxy, catalog proxy, S3 presign.
+│  ├─ prompt-service/
+│  │  ├─ README.md                    [~30]  Validates, IDs jobs, enqueues to fairness.
+│  │  ├─ Dockerfile                   [~10]  FastAPI runtime image.
+│  │  ├─ pyproject.toml               [~15]  FastAPI + httpx deps.
+│  │  └─ src/
+│  │     ├─ main.py                   [~12]  Router registration.
+│  │     ├─ settings.py               [~15]  Fair scheduler URL and limits.
+│  │     ├─ models.py                 [~15]  Prompt request schema.
+│  │     ├─ util/helpers.py           [~30]  job_id + cost estimation helpers.
+│  │     └─ routers/routes.py         [~80]  `/prompts/{image|video}` → `/enqueue`.
+│  ├─ fair-scheduler/
+│  │  ├─ README.md                    [~50]  DRR model, endpoints, Redis layout.
+│  │  ├─ Dockerfile                   [~10]  FastAPI + redis client.
+│  │  ├─ pyproject.toml               [~15]  FastAPI, redis, orjson, prometheus.
+│  │  └─ src/
+│  │     ├─ main.py                   [~35]  App, `/metrics`, metrics refresher.
+│  │     ├─ version.py                [~1]   Version string.
+│  │     ├─ settings.py               [~15]  Redis URL, quantum, lock TTL, scan cap.
+│  │     ├─ util/logging.py           [~25]  JSON/text logging.
+│  │     ├─ models.py                 [~30]  Enqueue/Next/Complete models.
+│  │     ├─ store.py                  [~120] Redis keys, ring/ptr/deficits/queues ops.
+│  │     ├─ drr.py                    [~70]  DRR algorithm and cost estimator.
+│  │     ├─ metrics.py                [~120] Prometheus counters/gauges, EMA logic.
+│  │     └─ routers/
+│  │        ├─ health.py              [~10]  `/healthz`.
+│  │        └─ schedule.py            [~140] enqueue/next/complete/stats + metrics.
+│  ├─ gpu-worker/
+│  │  ├─ README.md                    [~80]  Endpoints, GIF mode, S3 upload, demo HTML.
+│  │  ├─ Dockerfile                   [~15]  Pillow + numpy + boto3 image.
+│  │  ├─ pyproject.toml               [~15]  FastAPI, Pillow, numpy, boto3.
+│  │  └─ src/
+│  │     ├─ main.py                   [~35]  App + demo HTML route.
+│  │     ├─ version.py                [~1]   Version string.
+│  │     ├─ settings.py               [~20]  Defaults (img size, seed), S3 env.
+│  │     ├─ models.py                 [~20]  Generate request/batch schemas.
+│  │     ├─ engine.py                 [~100] Synthetic PNG/GIF generator.
+│  │     ├─ storage.py                [~60]  Local save + optional S3 upload.
+│  │     ├─ util/logging.py           [~25]  Logger setup.
+│  │     ├─ routers/health.py         [~20]  Health/ready/info endpoints.
+│  │     ├─ routers/generate.py       [~80]  `/generate`, `/generate/batch` with semaphore.
+│  │     ├─ routers/models.py         [~20]  Static model catalogue.
+│  │     └─ static/demo.html          [~80]  Browser demo to call `/generate`.
+│  ├─ video-worker/
+│  │  ├─ README.md                    [~60]  Isolated video service; GPU node pool.
+│  │  ├─ Dockerfile                   [~15]  FastAPI + ffmpeg runtime.
+│  │  ├─ pyproject.toml               [~15]  FastAPI + deps.
+│  │  └─ src/
+│  │     ├─ main.py                   [~40]  App + routes.
+│  │     ├─ settings.py               [~20]  Video params defaults.
+│  │     ├─ util/logging.py           [~25]  Logger setup.
+│  │     ├─ engine.py                 [~100] Video synthesis/encode scaffold.
+│  │     └─ routers/generate_video.py [~120] `/generate/video` (+batch) endpoints.
+│  └─ model-catalog/
+│     ├─ README.md                    [~50]  SMR + DDB aggregation rationale.
+│     ├─ Dockerfile                   [~10]  FastAPI runtime image.
+│     ├─ pyproject.toml               [~15]  FastAPI + boto3 + ddb SDKs.
+│     └─ src/
+│        ├─ main.py                   [~25]  App + router.
+│        ├─ settings.py               [~20]  SMR & DDB access config.
+│        ├─ util/logging.py           [~25]  Logger setup.
+│        └─ routers/models.py         [~120] `/models` query/filters, SMR+DDB merge.
+├─ deploy/
+│  └─ k8s/
+│     ├─ base/                        [~220] Core kustomizations per service + HPAs.
+│     └─ overlays/
+│        ├─ aws/                      [~160] IRSA patches; fair-scheduler Redis patch.
+│        └─ local/                    [~80]  Local dev kustomizations.
+├─ infra/
+│  └─ terraform/
+│     ├─ modules/
+│     │  ├─ irsa-role/                [~70]  Reusable IRSA role module.
+│     │  ├─ redis/                    [~120] ElastiCache replication group + SG.
+│     │  └─ s3-artifacts/             [~110] Versioned/SSE artifacts bucket.
+│     ├─ variables.tf                 [~20]  Root input vars.
+│     ├─ policies.tf                  [~80]  S3 read/write + model-catalog policy.
+│     ├─ infra_consolidation.tf       [~120] IRSA wiring + modules instantiation.
+│     └─ outputs.tf                   [~25]  Bucket, Redis, IRSA role ARNs.
+├─ ops/
+│  ├─ Makefile                        [~35]  Build/push/deploy targets per service.
+│  ├─ scripts/
+│  │  ├─ sync_irsa_patches.py         [~80]  Inject IRSA ARNs into overlays.
+│  │  └─ set_redis_url.py             [~60]  Patch fair-scheduler REDIS_URL.
+│  └─ monitoring/
+│     ├─ grafana/dashboards/adaptive-split.json [~60]  Image vs video split dashboard.
+│     └─ alerts/adaptive.yml          [~40]  Backlog alert rules.
+└─ config/
+   └─ README.md                       [~15]  Centralized config notes.

@@ -1,0 +1,11 @@
+
+[project]
+name = "model-registry"
+version = "0.1.0"
+description = "File-backed model registry for ai-microgen"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic",
+]

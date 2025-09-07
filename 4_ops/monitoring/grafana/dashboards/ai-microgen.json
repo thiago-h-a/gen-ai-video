@@ -1,0 +1,15 @@
+
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "title": "ai-microgen Overview",
+  "panels": [
+    {"type": "stat", "title": "Queue Depth", "targets": [{"expr": "ai_queue_depth"}]},
+    {"type": "graph", "title": "Jobs Done/Failed", "targets": [
+      {"expr": "rate(ai_jobs_done_total[5m])"},
+      {"expr": "rate(ai_jobs_failed_total[5m])"}
+    ]}
+  ],
+  "schemaVersion": 38,
+  "version": 1
+}
