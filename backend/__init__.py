@@ -1,0 +1,1 @@
+"""Backend package root (empty by design)."""
